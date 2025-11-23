@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
             <script src="lib/bindings/utils.js"></script>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -34,7 +35,8 @@
              #mynetwork {
                  width: 100%;
                  height: 800px;
-                 background-color: #ffffff;
+                 min-height: 500px;
+                 background-color: rgba(255, 255, 255, 0.95);
                  border: 1px solid lightgray;
                  position: relative;
                  float: left;
@@ -47,6 +49,7 @@
                  left:0px;
                  width: 100%;
                  height: 800px;
+                 min-height: 500px;
                  background-color:rgba(200,200,200,0.8);
                  -webkit-transition: all 0.5s ease;
                  -moz-transition: all 0.5s ease;
@@ -110,19 +113,310 @@
                  box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
              }
              
-
+             
              
 
              
+             /* Mobile responsive styles */
+             html, body {
+                 margin: 0;
+                 padding: 0;
+                 width: 100%;
+                 height: 100%;
+                 overflow: hidden;
+                 position: relative;
+             }
+             
+             /* Background watermark pattern - Multiple instances */
+             body::before {
+                 content: "NEMETSCHEK, TUM Venture, Blueberries";
+                 position: fixed;
+                 top: 10%;
+                 left: -5%;
+                 width: 120%;
+                 height: 120%;
+                 z-index: 2;
+                 pointer-events: none;
+                 opacity: 0.06;
+                 font-size: 3.5rem;
+                 font-weight: bold;
+                 color: #000;
+                 transform: rotate(-35deg);
+                 white-space: nowrap;
+                 text-shadow: 0 0 10px rgba(0,0,0,0.1);
+             }
+             
+             /* Additional watermark layer */
+             body::after {
+                 content: "NEMETSCHEK, TUM Venture, Blueberries • NEMETSCHEK, TUM Venture, Blueberries • NEMETSCHEK, TUM Venture, Blueberries";
+                 position: fixed;
+                 top: 50%;
+                 left: -15%;
+                 width: 130%;
+                 height: 130%;
+                 z-index: 2;
+                 pointer-events: none;
+                 opacity: 0.04;
+                 font-size: 2.8rem;
+                 font-weight: bold;
+                 color: #000;
+                 transform: rotate(25deg);
+                 white-space: nowrap;
+                 text-shadow: 0 0 10px rgba(0,0,0,0.1);
+             }
+             
+             /* Additional watermark using a wrapper div for more instances */
+             .watermark-overlay {
+                 position: fixed;
+                 top: 0;
+                 left: 0;
+                 width: 100%;
+                 height: 100%;
+                 z-index: 2;
+                 pointer-events: none;
+                 overflow: hidden;
+             }
+             
+             .watermark-text {
+                 position: absolute;
+                 font-size: 2.5rem;
+                 font-weight: bold;
+                 color: #000;
+                 opacity: 0.04;
+                 white-space: nowrap;
+                 text-shadow: 0 0 5px rgba(0,0,0,0.05);
+             }
+             
+             .watermark-text:nth-child(1) {
+                 top: 5%;
+                 left: 5%;
+                 transform: rotate(-20deg);
+             }
+             
+             .watermark-text:nth-child(2) {
+                 top: 30%;
+                 right: 10%;
+                 transform: rotate(15deg);
+             }
+             
+             .watermark-text:nth-child(3) {
+                 bottom: 20%;
+                 left: 8%;
+                 transform: rotate(-10deg);
+             }
+             
+             .watermark-text:nth-child(4) {
+                 bottom: 5%;
+                 right: 5%;
+                 transform: rotate(20deg);
+             }
+             
+             .watermark-text:nth-child(5) {
+                 top: 60%;
+                 left: 50%;
+                 transform: translateX(-50%) rotate(-5deg);
+             }
+             
+             /* Welcome Modal - Full Page Blueberry */
+             #welcomeModal {
+                 display: none;
+                 position: fixed;
+                 z-index: 10000;
+                 left: 0;
+                 top: 0;
+                 width: 100%;
+                 height: 100%;
+                 background: linear-gradient(135deg, #4C1D95 0%, #6B21A8 25%, #9333EA 50%, #7C3AED 75%, #A855F7 100%);
+                 animation: fadeIn 0.3s ease-in;
+             }
+             
+             #welcomeModal.show {
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+             }
+             
+             .modal-content {
+                 background: transparent;
+                 padding: 0;
+                 border-radius: 0;
+                 box-shadow: none;
+                 text-align: center;
+                 width: 100%;
+                 height: 100%;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 animation: slideIn 0.4s ease-out;
+                 position: relative;
+             }
+             
+             .modal-content h2 {
+                 margin: 0;
+                 font-size: 3.5rem;
+                 color: #fff;
+                 font-weight: bold;
+                 text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+             }
+             
+             .close-btn {
+                 display: none;
+             }
+             
+             @keyframes fadeIn {
+                 from { opacity: 0; }
+                 to { opacity: 1; }
+             }
+             
+             @keyframes slideIn {
+                 from {
+                     transform: translateY(-50px);
+                     opacity: 0;
+                 }
+                 to {
+                     transform: translateY(0);
+                     opacity: 1;
+                 }
+             }
+             
+             @media screen and (max-width: 768px) {
+                 .modal-content {
+                     padding: 0;
+                 }
+                 
+                 .modal-content h2 {
+                     font-size: 2.5rem;
+                 }
+             }
+             
+             @media screen and (max-width: 480px) {
+                 .modal-content h2 {
+                     font-size: 2rem;
+                 }
+             }
+                 
+                 body::before {
+                     font-size: 2rem;
+                 }
+                 
+                 body::after {
+                     font-size: 1.5rem;
+                 }
+                 
+                 .watermark-text {
+                     font-size: 1.5rem;
+                 }
+             }
+             
+             @media screen and (max-width: 480px) {
+                 .watermark-text {
+                     font-size: 1.2rem;
+                 }
+                 
+                 body::before {
+                     font-size: 1.5rem;
+                 }
+                 
+                 body::after {
+                     font-size: 1.2rem;
+                 }
+             }
+             
+             @media screen and (max-width: 768px) {
+                 #mynetwork {
+                     height: 100vh !important;
+                     min-height: 100vh;
+                     width: 100vw;
+                 }
+                 
+                 #loadingBar {
+                     height: 100vh !important;
+                     min-height: 100vh;
+                     width: 100vw;
+                 }
+                 
+                 #border {
+                     width: 90%;
+                     max-width: 500px;
+                 }
+                 
+                 #text {
+                     left: auto;
+                     right: 10px;
+                     font-size: 18px;
+                 }
+                 
+                 div.outerBorder {
+                     width: 90%;
+                     max-width: 600px;
+                 }
+                 
+                 body {
+                     margin: 0;
+                     padding: 0;
+                     overflow: hidden;
+                     position: fixed;
+                     width: 100%;
+                     height: 100%;
+                 }
+                 
+                 .card {
+                     margin: 0;
+                     border: none;
+                     width: 100vw !important;
+                     height: 100vh;
+                 }
+                 
+                 .card-body {
+                     padding: 0 !important;
+                     width: 100%;
+                     height: 100%;
+                 }
+             }
+             
+             @media screen and (max-width: 480px) {
+                 #mynetwork {
+                     height: 100vh !important;
+                     min-height: 100vh;
+                     width: 100vw;
+                 }
+                 
+                 #loadingBar {
+                     height: 100vh !important;
+                     min-height: 100vh;
+                     width: 100vw;
+                 }
+                 
+                 #text {
+                     font-size: 16px;
+                 }
+             }
         </style>
     </head>
 
 
     <body>
-        <div class="card" style="width: 100%">
+        <!-- Background Watermarks -->
+        <div class="watermark-overlay">
+            <div class="watermark-text">NEMETSCHEK, TUM Venture, Blueberries</div>
+            <div class="watermark-text">NEMETSCHEK, TUM Venture, Blueberries</div>
+            <div class="watermark-text">NEMETSCHEK, TUM Venture, Blueberries</div>
+            <div class="watermark-text">NEMETSCHEK, TUM Venture, Blueberries</div>
+            <div class="watermark-text">NEMETSCHEK, TUM Venture, Blueberries</div>
+        </div>
+        
+        <!-- Welcome Modal -->
+        <div id="welcomeModal" class="show">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeWelcomeModal()">&times;</button>
+                <h2>Heyyy we are team blueberries</h2>
+            </div>
+        </div>
+        
+        <div class="card" style="width: 100%; margin: 0; padding: 0; border: none; position: relative; z-index: 1; background: transparent;">
             
             
-            <div id="mynetwork" class="card-body"></div>
+            <div id="mynetwork" class="card-body" style="padding: 0; margin: 0;"></div>
         </div>
 
         
@@ -194,7 +488,13 @@
     "interaction": {
         "dragNodes": true,
         "hideEdgesOnDrag": false,
-        "hideNodesOnDrag": false
+        "hideNodesOnDrag": false,
+        "zoomView": true,
+        "dragView": true,
+        "navigationButtons": false,
+        "keyboard": false,
+        "multiselect": false,
+        "selectConnectedEdges": true
     },
     "physics": {
         "enabled": true,
@@ -254,6 +554,37 @@
 
               }
               drawGraph();
+              
+              // Welcome Modal Functions
+              function closeWelcomeModal() {
+                  var modal = document.getElementById('welcomeModal');
+                  modal.classList.remove('show');
+                  setTimeout(function() {
+                      modal.style.display = 'none';
+                  }, 300);
+              }
+              
+              // Auto-hide modal after 2 seconds
+              window.addEventListener('load', function() {
+                  setTimeout(function() {
+                      closeWelcomeModal();
+                  }, 2000);
+              });
+              
+              // Close modal when clicking outside of it
+              window.onclick = function(event) {
+                  var modal = document.getElementById('welcomeModal');
+                  if (event.target == modal) {
+                      closeWelcomeModal();
+                  }
+              }
+              
+              // Close modal with Escape key
+              document.addEventListener('keydown', function(event) {
+                  if (event.key === 'Escape') {
+                      closeWelcomeModal();
+                  }
+              });
         </script>
     </body>
 </html>
